@@ -15,6 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente {
+
+    @Id
     @Column(name="id_cliente", nullable = false)
     private Long idCliente;
 
