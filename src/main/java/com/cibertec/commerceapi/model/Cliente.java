@@ -26,8 +26,7 @@ public class Cliente {
     @Column(name="num_doc_identidad", length = 50, nullable = false)
     private String numDocIdentidad;
 
-    @OneToOne
-    @JoinColumn(name="id_usuario")
+    @Column(name="id_usuario")
     private Long idUsuario; // dato de microservicio externo
 
     @OneToOne
