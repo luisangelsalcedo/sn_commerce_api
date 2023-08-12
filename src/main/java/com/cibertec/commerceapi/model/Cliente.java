@@ -32,5 +32,5 @@ public class Cliente {
 
     @OneToOne
     @JoinColumn(name="id_tipo_doc_identidad")
-    private TipoDocIdentidad idTipoDocIdentidad;
+    private TipoDocIdentidad tipoDocIdentidad;
 }

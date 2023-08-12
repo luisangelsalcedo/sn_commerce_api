@@ -13,5 +13,5 @@ public class ClienteUpdateDTO {
     private Date fecNacimiento;
     private String numDocIdentidad;
     private Long idUsuario; // dato de microservicio externo
-    private TipoDocIdentidad idTipoDocIdentidad;
+    private TipoDocIdentidad tipoDocIdentidad;
 }

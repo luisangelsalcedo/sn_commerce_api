@@ -5,10 +5,13 @@ import com.cibertec.commerceapi.dtos.ClienteDTO;
 import com.cibertec.commerceapi.dtos.ClienteUpdateDTO;
 import com.cibertec.commerceapi.mappers.ClienteMapper;
 import com.cibertec.commerceapi.model.Cliente;
+import com.cibertec.commerceapi.model.TipoDocIdentidad;
 import com.cibertec.commerceapi.repository.ClienteRepository;
+import com.cibertec.commerceapi.repository.TipoDocIdentidadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,9 @@ public class ClienteServiceImpl implements ClienteService{
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private TipoDocIdentidadRepository tipoDocIdentidadRepository;
 
     @Override
     public List<ClienteDTO> listarClientes() {
@@ -37,6 +43,13 @@ public class ClienteServiceImpl implements ClienteService{
     @Override
     public ClienteDTO registrarCliente(ClienteCreateDTO clienteCreateDTO) {
         Cliente cliente = ClienteMapper.instancia.clienteCreateDTOACliente(clienteCreateDTO);
+
+        // Añadir tipoDocIdentidad en cliente
+        TipoDocIdentidad tipoDocIdentidad = tipoDocIdentidadRepository.findById(clienteCreateDTO.getTipoDocIdentidad().getIdTipoDocIdentidad())
+                .orElseThrow(() -> new EntityNotFoundException("Tipo de documento no encontrado"));
+        cliente.setTipoDocIdentidad(tipoDocIdentidad);
+        //
+
         Cliente respuestaEntity = clienteRepository.save(cliente);
         ClienteDTO respuetaDTO = ClienteMapper.instancia.clienteAClienteDTO(respuestaEntity);
         return respuetaDTO;
