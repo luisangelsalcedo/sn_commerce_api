@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="tb_tipo_doc_identidad")
@@ -19,6 +16,7 @@ import javax.persistence.Table;
 public class TipoDocIdentidad {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_tipo_doc_identidad", nullable = false)
     private Long idTipoDocIdentidad;
 
