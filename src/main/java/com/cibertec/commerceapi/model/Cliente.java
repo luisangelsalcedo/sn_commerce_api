@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="tb_cliente")
@@ -22,7 +22,7 @@ public class Cliente {
     private Long idCliente;
 
     @Column(name="fec_nacimiento", nullable = false)
-    private Date fecNacimiento;
+    private LocalDate fecNacimiento;
 
     @Column(name="num_doc_identidad", length = 50, nullable = false)
     private String numDocIdentidad;
