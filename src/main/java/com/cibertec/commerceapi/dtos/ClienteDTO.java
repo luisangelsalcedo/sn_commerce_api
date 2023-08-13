@@ -12,6 +12,7 @@ public class ClienteDTO {
     private Long idCliente;
     private Date fecNacimiento;
     private String numDocIdentidad;
-    private Long idUsuario; // dato de microservicio externo
+    private Long idUsuario;
+    private UsuarioDTO usuario; // dato de microservicio externo
     private TipoDocIdentidad tipoDocIdentidad;
 }
