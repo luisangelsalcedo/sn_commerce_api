@@ -44,11 +44,17 @@ public class PedidoServiceImpl implements PedidoService{
     @Override
     public PedidoDTO registrarPedido(PedidoCreateDTO pedidoCreateDTO) {
 
-        Pedido pedido= PedidoMapper.instancia.pedidoCreateDTOAPedido(pedidoCreateDTO);
+        Pedido pedido = PedidoMapper.instancia.pedidoCreateDTOAPedido(pedidoCreateDTO);
+
+        // Añadir DetallePedido en el pedido
+        List<PedidoDetalle> pedidoDetalleList = pedido.getPedidoDetalle();
+        for(PedidoDetalle detalle : pedidoDetalleList){
+            pedidoDetalleRepository.save(detalle);
+        }
+        //
+
         Pedido respuestaEntity= pedidoRepository.save(pedido);
-
-        PedidoDTO respuestaDTO = PedidoMapper.instancia.pedidoAPedidoDTO(pedidoRepository.findById(respuestaEntity.getIdPedido()).orElse(null));
-
+        PedidoDTO respuestaDTO = PedidoMapper.instancia.pedidoAPedidoDTO(respuestaEntity);
         return respuestaDTO;
     }
 }
