@@ -30,6 +30,9 @@ public class PedidoServiceImpl implements PedidoService {
     @Autowired
     private PedidoDetalleFeignProducto pedidoDetalleFeignProducto;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @Override
     public List<PedidoDTO> listarPedidos() {
         List<PedidoDTO> lista = PedidoMapper.instancia.listaPedidoAListaPedidoDTO(pedidoRepository.findAll());
@@ -66,6 +69,8 @@ public class PedidoServiceImpl implements PedidoService {
             Long idProducto = pedidoDetalleDTO.getIdProducto();
             ProductoDTO productoDTO = pedidoDetalleFeignProducto.obtenerProductoPorId(idProducto);
             pedidoDetalleDTO.setProducto(productoDTO);
+
+            clienteService.inyectarUsuariosEnCliente(pedidoDTO.getCliente());
         }
     }
 

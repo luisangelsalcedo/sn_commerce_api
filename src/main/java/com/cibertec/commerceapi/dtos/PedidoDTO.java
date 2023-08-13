@@ -15,6 +15,6 @@ public class PedidoDTO {
     private Date fecPedido;
     private BigDecimal montoSubtotal;
     private BigDecimal montoTotal;
-    private Cliente cliente;
+    private ClienteDTO cliente;
     private List<PedidoDetalleDTO> pedidoDetalle;
 }

@@ -12,4 +12,6 @@ public interface ClienteService {
     ClienteDTO registrarCliente(ClienteCreateDTO clienteCreateDTO);
     ClienteDTO actualizarCliente(ClienteUpdateDTO clienteUpdateDTO);
     String eliminarCliente(long id);
+
+    void inyectarUsuariosEnCliente(ClienteDTO clienteDTO);
 }

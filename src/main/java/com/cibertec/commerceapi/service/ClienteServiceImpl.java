@@ -87,7 +87,7 @@ public class ClienteServiceImpl implements ClienteService{
 
     ////////////////////////////////////////////////////////////////////
 
-    private void inyectarUsuariosEnCliente(ClienteDTO clienteDTO){
+    public void inyectarUsuariosEnCliente(ClienteDTO clienteDTO){
         Long idUsuario = clienteDTO.getIdUsuario();
         UsuarioDTO usuarioDTO = clienteFeignUsuario.obtenerUsuarioPorId(idUsuario);
         clienteDTO.setUsuario(usuarioDTO);
