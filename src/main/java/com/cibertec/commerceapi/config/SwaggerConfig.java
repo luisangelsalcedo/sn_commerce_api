@@ -25,8 +25,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
-                .title("CommerceApi - Postgres")
-                .description("Proyecto Salud Nativa")
+                .title("Salud Nativa - Commerce API (Postgres)")
+                .description("API Rest de Pedidos y Gestión de Clientes ")
                 .version("1.0.0")
                 .build();
     }
