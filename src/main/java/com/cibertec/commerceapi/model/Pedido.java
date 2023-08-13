@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -24,7 +24,7 @@ public class Pedido {
     private Long idPedido;
 
     @Column(name = "fec_pedido", nullable = false)
-    private LocalDate fecPedido;
+    private Date fecPedido;
 
     @Column(name = "monto_subtotal", precision = 10, scale = 2, nullable = false)
     private BigDecimal montoSubtotal;
