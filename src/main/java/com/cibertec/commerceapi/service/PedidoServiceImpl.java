@@ -16,15 +16,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 
 @Service
-public class PedidoServiceImpl implements PedidoService{
-
-    private static final Logger logger = LoggerFactory.getLogger(PedidoServiceImpl.class);
+public class PedidoServiceImpl implements PedidoService {
 
     @Autowired
     private PedidoRepository pedidoRepository;
@@ -38,25 +33,7 @@ public class PedidoServiceImpl implements PedidoService{
     @Override
     public List<PedidoDTO> listarPedidos() {
         List<PedidoDTO> lista = PedidoMapper.instancia.listaPedidoAListaPedidoDTO(pedidoRepository.findAll());
-
-        for (PedidoDTO pedidoDTO : lista){
-            // obtengo todos los detallePedido en una lista
-            List<PedidoDetalleDTO> pedidoDetalleDTOList = pedidoDTO.getPedidoDetalle();
-
-            // recorro la lista
-            for (PedidoDetalleDTO pedidoDetalleDTO : pedidoDetalleDTOList){
-
-                // obtengo el id del producto de cada item
-                Long idProducto = pedidoDetalleDTO.getIdProducto();
-
-                // obtengo el producto con su id usando feign
-                ProductoDTO productoDTO = pedidoDetalleFeignProducto.obtenerProductoPorId(idProducto);
-
-                // inyecto el producto en pedidoDetalle
-                pedidoDetalleDTO.setProducto(productoDTO);
-            }
-        }
-
+        lista.forEach(this::inyectarProductosEnPedido);
         return lista;
     }
 
@@ -64,31 +41,36 @@ public class PedidoServiceImpl implements PedidoService{
     public PedidoDTO obtenerPedidoPorID(long id) {
         Optional<Pedido> pedido = pedidoRepository.findById(id);
         PedidoDTO pedidoDTO = null;
-        if ( pedido.isPresent() ){
+        if (pedido.isPresent()) {
             pedidoDTO = PedidoMapper.instancia.pedidoAPedidoDTO(pedido.get());
+            inyectarProductosEnPedido(pedidoDTO);
         }
         return pedidoDTO;
     }
 
     @Override
     public PedidoDTO registrarPedido(PedidoCreateDTO pedidoCreateDTO) {
-
         Pedido pedido = PedidoMapper.instancia.pedidoCreateDTOAPedido(pedidoCreateDTO);
         Pedido respuestaEntity = pedidoRepository.save(pedido);
-
         Long idPedido = respuestaEntity.getIdPedido();
-        logger.debug(idPedido.toString());
+        agregarDetallePedido(idPedido, pedido.getPedidoDetalle());
+        PedidoDTO respuestaDTO = PedidoMapper.instancia.pedidoAPedidoDTO(respuestaEntity);
+        return respuestaDTO;
+    }
 
-        // Añadir DetallePedido en el pedido
-        List<PedidoDetalle> pedidoDetalleList = pedido.getPedidoDetalle();
-        for(PedidoDetalle detalle : pedidoDetalleList){
+    private void inyectarProductosEnPedido(PedidoDTO pedidoDTO) {
+        List<PedidoDetalleDTO> pedidoDetalleDTOList = pedidoDTO.getPedidoDetalle();
+        for (PedidoDetalleDTO pedidoDetalleDTO : pedidoDetalleDTOList) {
+            Long idProducto = pedidoDetalleDTO.getIdProducto();
+            ProductoDTO productoDTO = pedidoDetalleFeignProducto.obtenerProductoPorId(idProducto);
+            pedidoDetalleDTO.setProducto(productoDTO);
+        }
+    }
 
+    private void agregarDetallePedido(Long idPedido, List<PedidoDetalle> pedidoDetalleList) {
+        for (PedidoDetalle detalle : pedidoDetalleList) {
             detalle.setIdPedido(idPedido);
             pedidoDetalleRepository.save(detalle);
         }
-        //
-
-        PedidoDTO respuestaDTO = PedidoMapper.instancia.pedidoAPedidoDTO(respuestaEntity);
-        return respuestaDTO;
     }
 }
