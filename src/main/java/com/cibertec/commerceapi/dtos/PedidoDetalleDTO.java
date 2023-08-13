@@ -12,4 +12,5 @@ public class PedidoDetalleDTO {
     private BigDecimal montoSubtotalProducto;
     private Long idProducto;
     private Long idPedido;
+    private ProductoDTO producto;
 }

@@ -2,6 +2,9 @@ package com.cibertec.commerceapi.service;
 
 import com.cibertec.commerceapi.dtos.PedidoCreateDTO;
 import com.cibertec.commerceapi.dtos.PedidoDTO;
+import com.cibertec.commerceapi.dtos.PedidoDetalleDTO;
+import com.cibertec.commerceapi.dtos.ProductoDTO;
+import com.cibertec.commerceapi.feign.PedidoDetalleFeignProducto;
 import com.cibertec.commerceapi.mappers.PedidoMapper;
 import com.cibertec.commerceapi.model.Pedido;
 import com.cibertec.commerceapi.model.PedidoDetalle;
@@ -29,9 +32,31 @@ public class PedidoServiceImpl implements PedidoService{
     @Autowired
     private PedidoDetalleRepository pedidoDetalleRepository;
 
+    @Autowired
+    private PedidoDetalleFeignProducto pedidoDetalleFeignProducto;
+
     @Override
     public List<PedidoDTO> listarPedidos() {
         List<PedidoDTO> lista = PedidoMapper.instancia.listaPedidoAListaPedidoDTO(pedidoRepository.findAll());
+
+        for (PedidoDTO pedidoDTO : lista){
+            // obtengo todos los detallePedido en una lista
+            List<PedidoDetalleDTO> pedidoDetalleDTOList = pedidoDTO.getPedidoDetalle();
+
+            // recorro la lista
+            for (PedidoDetalleDTO pedidoDetalleDTO : pedidoDetalleDTOList){
+
+                // obtengo el id del producto de cada item
+                Long idProducto = pedidoDetalleDTO.getIdProducto();
+
+                // obtengo el producto con su id usando feign
+                ProductoDTO productoDTO = pedidoDetalleFeignProducto.obtenerProductoPorId(idProducto);
+
+                // inyecto el producto en pedidoDetalle
+                pedidoDetalleDTO.setProducto(productoDTO);
+            }
+        }
+
         return lista;
     }
 
