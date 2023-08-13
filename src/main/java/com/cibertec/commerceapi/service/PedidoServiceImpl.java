@@ -2,9 +2,6 @@ package com.cibertec.commerceapi.service;
 
 import com.cibertec.commerceapi.dtos.PedidoCreateDTO;
 import com.cibertec.commerceapi.dtos.PedidoDTO;
-import com.cibertec.commerceapi.dtos.PedidoDetalleCreateDTO;
-import com.cibertec.commerceapi.dtos.PedidoDetalleDTO;
-import com.cibertec.commerceapi.mappers.PedidoDetalleMapper;
 import com.cibertec.commerceapi.mappers.PedidoMapper;
 import com.cibertec.commerceapi.model.Pedido;
 import com.cibertec.commerceapi.model.PedidoDetalle;
@@ -16,8 +13,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 @Service
 public class PedidoServiceImpl implements PedidoService{
+
+    private static final Logger logger = LoggerFactory.getLogger(PedidoServiceImpl.class);
 
     @Autowired
     private PedidoRepository pedidoRepository;
@@ -45,15 +49,20 @@ public class PedidoServiceImpl implements PedidoService{
     public PedidoDTO registrarPedido(PedidoCreateDTO pedidoCreateDTO) {
 
         Pedido pedido = PedidoMapper.instancia.pedidoCreateDTOAPedido(pedidoCreateDTO);
+        Pedido respuestaEntity = pedidoRepository.save(pedido);
+
+        Long idPedido = respuestaEntity.getIdPedido();
+        logger.debug(idPedido.toString());
 
         // Añadir DetallePedido en el pedido
         List<PedidoDetalle> pedidoDetalleList = pedido.getPedidoDetalle();
         for(PedidoDetalle detalle : pedidoDetalleList){
+
+            detalle.setIdPedido(idPedido);
             pedidoDetalleRepository.save(detalle);
         }
         //
 
-        Pedido respuestaEntity= pedidoRepository.save(pedido);
         PedidoDTO respuestaDTO = PedidoMapper.instancia.pedidoAPedidoDTO(respuestaEntity);
         return respuestaDTO;
     }

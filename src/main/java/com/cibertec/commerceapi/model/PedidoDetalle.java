@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 public class PedidoDetalle {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pedido_detalle", nullable = false)
     private Long idPedidoDetalle;
 
