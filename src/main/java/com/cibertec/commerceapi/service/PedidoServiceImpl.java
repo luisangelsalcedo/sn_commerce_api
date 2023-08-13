@@ -58,6 +58,8 @@ public class PedidoServiceImpl implements PedidoService {
         return respuestaDTO;
     }
 
+    ////////////////////////////////////////////////////////////////////
+
     private void inyectarProductosEnPedido(PedidoDTO pedidoDTO) {
         List<PedidoDetalleDTO> pedidoDetalleDTOList = pedidoDTO.getPedidoDetalle();
         for (PedidoDetalleDTO pedidoDetalleDTO : pedidoDetalleDTOList) {

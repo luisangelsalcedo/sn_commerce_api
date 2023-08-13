@@ -3,6 +3,8 @@ package com.cibertec.commerceapi.service;
 import com.cibertec.commerceapi.dtos.ClienteCreateDTO;
 import com.cibertec.commerceapi.dtos.ClienteDTO;
 import com.cibertec.commerceapi.dtos.ClienteUpdateDTO;
+import com.cibertec.commerceapi.dtos.UsuarioDTO;
+import com.cibertec.commerceapi.feign.ClienteFeignUsuario;
 import com.cibertec.commerceapi.mappers.ClienteMapper;
 import com.cibertec.commerceapi.model.Cliente;
 import com.cibertec.commerceapi.model.TipoDocIdentidad;
@@ -24,9 +26,14 @@ public class ClienteServiceImpl implements ClienteService{
     @Autowired
     private TipoDocIdentidadRepository tipoDocIdentidadRepository;
 
+    @Autowired
+    private ClienteFeignUsuario clienteFeignUsuario ;
+
     @Override
     public List<ClienteDTO> listarClientes() {
-        return ClienteMapper.instancia.listaClienteAListaClienteDTO(clienteRepository.findAll());
+        List<ClienteDTO> lista = ClienteMapper.instancia.listaClienteAListaClienteDTO(clienteRepository.findAll());
+        lista.forEach(this::inyectarUsuariosEnCliente);
+        return lista;
     }
 
     @Override
@@ -36,6 +43,8 @@ public class ClienteServiceImpl implements ClienteService{
         if(clienteOptional.isPresent()){
             Cliente cliente = clienteOptional.get();
             clienteDTO = ClienteMapper.instancia.clienteAClienteDTO(cliente);
+
+            inyectarUsuariosEnCliente(clienteDTO);
         }
         return clienteDTO;
     }
@@ -74,5 +83,13 @@ public class ClienteServiceImpl implements ClienteService{
             mensaje = "No se pudo eliminar el registro";
         }
         return mensaje;
+    }
+
+    ////////////////////////////////////////////////////////////////////
+
+    private void inyectarUsuariosEnCliente(ClienteDTO clienteDTO){
+        Long idUsuario = clienteDTO.getIdUsuario();
+        UsuarioDTO usuarioDTO = clienteFeignUsuario.obtenerUsuarioPorId(idUsuario);
+        clienteDTO.setUsuario(usuarioDTO);
     }
 }
